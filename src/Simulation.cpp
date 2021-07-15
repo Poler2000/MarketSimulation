@@ -1,5 +1,2 @@
-//
-// Created by pawel on 14.07.2021.
-//
 
-#include "../include/Simulation.h"
+#include "Simulation.h"

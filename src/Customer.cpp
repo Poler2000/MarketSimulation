@@ -1,8 +1,8 @@
 #include <thread>
 #include <algorithm>
 
-#include "../include/Customer.h"
-#include "../include/Configuration.h"
+#include "Customer.h"
+#include "Configuration.h"
 
 using namespace std::chrono_literals;
 
@@ -48,8 +48,8 @@ namespace poler::market {
 
         for (const auto& p : wishlist) {
             if(market_->requestItem(p, money)) {
-                needs_[p] = needs_[p] < customerConfig.defaultNeedDecrease ? 0 :
-                        needs_[p] - customerConfig.defaultNeedDecrease;
+                needs_[p] = needs_[p] < CustomerConfig::defaultNeedDecrease ? 0 :
+                        needs_[p] - CustomerConfig::defaultNeedDecrease;
             }
             if (money <= 0) {
                 return;
@@ -68,7 +68,7 @@ namespace poler::market {
 
     void Customer::updateNeeds() {
         for (auto& p: needs_) {
-            p.second += customerConfig.defaultNeedIncrease;
+            p.second += CustomerConfig::defaultNeedIncrease;
         }
     }
 }

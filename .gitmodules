@@ -1,0 +1,3 @@
+[submodule "vendor/cpp_utils"]
+	path = vendor/cpp_utils
+	url = https://github.com/Poler2000/cpp_utils

@@ -1,5 +1,6 @@
-//
-// Created by pawel on 14.07.2021.
-//
+#include "Factory.h"
 
-#include "../include/Factory.h"
+namespace poler::market {
+
+}
+
