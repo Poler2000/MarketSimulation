@@ -6,13 +6,15 @@
 
 namespace poler::market {
     struct Product {
+        Product(uint32_t id, std::string name, double price)
+            : id(id), name(std::move(name)), price(price) {}
         const uint32_t id;
         const std::string name;
         std::atomic<double> price;
 
-        std::atomic_int32_t demand;
-        std::atomic_int32_t supply;
-        std::atomic_int32_t trend;
+        std::atomic_int32_t demand = 0;
+        std::atomic_int32_t supply = 0;
+        std::atomic_int32_t trend = 0;
         std::atomic_int32_t surplus = 0;
     };
 }

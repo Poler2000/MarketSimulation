@@ -8,9 +8,11 @@
 
 namespace poler::market {
     class Company {
-        Company(std::string name, std::vector<std::shared_ptr<Product>>&);
+    public:
+        Company(std::string name, std::vector<std::shared_ptr<Product>>& products);
         bool requestItem(std::shared_ptr<Product> product, double price);
         void run();
+
     private:
         const uint32_t id_;
         const std::string name_;

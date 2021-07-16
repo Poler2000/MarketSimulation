@@ -1,6 +1,7 @@
-#include <iostream>
+#include "Simulation.h"
 
 int main() {
-    std::cout << "Hello, World!" << std::endl;
+    poler::market::Simulation sim{1, 1, 1};
+    sim.run(3000);
     return 0;
 }

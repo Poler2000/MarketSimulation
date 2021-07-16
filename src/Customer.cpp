@@ -1,5 +1,6 @@
 #include <thread>
 #include <algorithm>
+#include <utility>
 
 #include "Customer.h"
 #include "Configuration.h"
@@ -7,9 +8,12 @@
 using namespace std::chrono_literals;
 
 namespace poler::market {
-    Customer::Customer(std::string name, std::uint32_t income, std::shared_ptr<Market> market)
-        : id_(getId()), name_(std::move(name)), income_(income), isRunning_(true), market_(market) {
-
+    Customer::Customer(std::string name, std::uint32_t income,
+                       std::shared_ptr<Market> market, std::vector<std::shared_ptr<Product>>& products)
+        : id_(getId()), name_(std::move(name)), income_(income), isRunning_(true), market_(std::move(market)) {
+            for (auto& p : products) {
+                needs_[p] = 10;
+            }
     }
 
     void Customer::run() {
@@ -22,7 +26,8 @@ namespace poler::market {
     }
 
     std::vector<std::shared_ptr<Product>> Customer::createWishlist() {
-        std::vector<std::shared_ptr<Product>> products(needs_.size());
+        std::vector<std::shared_ptr<Product>> products;
+        products.reserve(needs_.size());
         std::map<int, std::shared_ptr<Product>> mapReverse;
 
         /*static const auto cmp = [](std::pair<std::shared_ptr<Product>, int> const& a,
@@ -47,7 +52,7 @@ namespace poler::market {
         double money = income_;
 
         for (const auto& p : wishlist) {
-            if(market_->requestItem(p, money)) {
+            if (market_->buy(p, money)) {
                 needs_[p] = needs_[p] < CustomerConfig::defaultNeedDecrease ? 0 :
                         needs_[p] - CustomerConfig::defaultNeedDecrease;
             }

@@ -12,7 +12,8 @@
 namespace poler::market {
     class Customer {
     public:
-        Customer(std::string name, std::uint32_t  income, std::shared_ptr<Market> market);
+        Customer(std::string name, std::uint32_t  income,
+                 std::shared_ptr<Market> market, std::vector<std::shared_ptr<Product>>& products);
         void run();
     private:
         const uint32_t id_;
