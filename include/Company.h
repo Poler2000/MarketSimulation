@@ -12,6 +12,7 @@ namespace poler::market {
         Company(std::string name, std::vector<std::shared_ptr<Product>>& products);
         bool requestItem(std::shared_ptr<Product> product, double price);
         void run();
+        void exit();
 
     private:
         const uint32_t id_;

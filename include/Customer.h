@@ -15,6 +15,7 @@ namespace poler::market {
         Customer(std::string name, std::uint32_t  income,
                  std::shared_ptr<Market> market, std::vector<std::shared_ptr<Product>>& products);
         void run();
+        void exit();
     private:
         const uint32_t id_;
         const std::string name_;

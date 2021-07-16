@@ -30,13 +30,6 @@ namespace poler::market {
         products.reserve(needs_.size());
         std::map<int, std::shared_ptr<Product>> mapReverse;
 
-        /*static const auto cmp = [](std::pair<std::shared_ptr<Product>, int> const& a,
-                std::pair<std::shared_ptr<Product>,int> const& b) {
-            return a.second < b.second;
-        };
-
-        std::sort(needs_.begin(), needs_.end(), cmp);*/
-
         for (const auto& [key, value] : needs_) {
             mapReverse.emplace(value, key);
         }
@@ -75,6 +68,10 @@ namespace poler::market {
         for (auto& p: needs_) {
             p.second += CustomerConfig::defaultNeedIncrease;
         }
+    }
+
+    void Customer::exit() {
+        isRunning_ = false;
     }
 }
 

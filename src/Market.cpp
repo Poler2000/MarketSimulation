@@ -17,6 +17,7 @@ namespace poler::market {
                 auto newSurplus = p->supply - p->demand;
                 p->trend = p->surplus - newSurplus;
                 p->surplus = newSurplus;
+                p->displayInfo();
             }
         }
     }

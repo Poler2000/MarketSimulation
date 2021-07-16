@@ -13,25 +13,39 @@ namespace poler::market {
 
     void Simulation::run(uint32_t time) {
         utils::Logger::info("Simulation Starting!");
-        std::thread t([&](){
+        std::vector<std::thread> threads;
+
+        threads.emplace_back([&](){
             market_->run();
         });
-        t.detach();
+
         for (auto& comp : companies_) {
-            std::thread t([&](){
+            threads.emplace_back([&](){
                 comp->run();
             });
-            t.detach();
         }
 
         for (auto& cust : customers_) {
-            std::thread t([&](){
+            threads.emplace_back([&](){
                 cust->run();
             });
-            t.detach();
         }
 
         std::this_thread::sleep_for(std::chrono::milliseconds(time));
+
+        for (auto& cust : customers_) {
+            cust->exit();
+        }
+
+        for (auto& comp : companies_) {
+            comp->exit();
+        }
+
+        market_->exit();
+
+        for (auto& t : threads) {
+                t.join();
+        }
     }
 
     std::vector<std::shared_ptr<Product>> Simulation::generateProducts(uint32_t amount) {
