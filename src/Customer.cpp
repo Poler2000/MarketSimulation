@@ -1,6 +1,5 @@
 #include <thread>
 #include <algorithm>
-#include <utility>
 
 #include "Customer.h"
 #include "Configuration.h"

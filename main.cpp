@@ -1,7 +1,7 @@
 #include "Simulation.h"
 
 int main() {
-    poler::market::Simulation sim{1, 1, 1};
+    poler::market::Simulation sim{3, 2, 3};
     sim.run(3000);
     return 0;
 }

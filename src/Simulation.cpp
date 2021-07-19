@@ -1,7 +1,8 @@
 #include <thread>
 
 #include "Simulation.h"
-#include "Logger.h"
+#include "Configuration.h"
+#include "Random.h"
 
 namespace poler::market {
     Simulation::Simulation(uint32_t products, uint32_t companies, uint32_t customers)
@@ -49,22 +50,52 @@ namespace poler::market {
     }
 
     std::vector<std::shared_ptr<Product>> Simulation::generateProducts(uint32_t amount) {
-        std::vector<std::shared_ptr<Product>> products(amount);
-        products[0] = std::make_shared<Product>(1, "Bicycle", 10.0);
+        std::vector<std::shared_ptr<Product>> products;
+        products.reserve(amount);
+
+        const auto permutation = utils::Random::generatePermutation(0, productNames.size() - 1);
+
+        double minMoney = MarketConfig::productAvgPrice - MarketConfig::productPriceRandomFactor;
+        double maxMoney = MarketConfig::productAvgPrice + MarketConfig::productPriceRandomFactor;
+
+        for (size_t i = 0; i < amount; i++) {
+            products.emplace_back(std::make_shared<Product>(i, std::string(productNames[permutation[i]]),
+                                                    utils::Random::nextDouble(minMoney, maxMoney)));
+        }
         return products;
     }
 
     std::vector<std::shared_ptr<Company>>
-    Simulation::generateCompanies(uint32_t amount, std::vector<std::shared_ptr<Product>> products) {
-        std::vector<std::shared_ptr<Company>> companies(amount);
-        companies[0] = std::make_shared<Company>("Poler Inc.", products);
+    Simulation::generateCompanies(uint32_t amount, const std::vector<std::shared_ptr<Product>>& products) {
+        std::vector<std::shared_ptr<Company>> companies;
+        companies.reserve(amount);
+
+        const auto permutation = utils::Random::generatePermutation(0, companyNames.size() - 1);
+
+        double minMoney = MarketConfig::companyAvgMoney - MarketConfig::companyMoneyRandomFactor;
+        double maxMoney = MarketConfig::companyAvgMoney + MarketConfig::companyMoneyRandomFactor;
+
+        for (size_t i = 0; i < amount; i++) {
+            companies.emplace_back(std::make_shared<Company>(std::string(companyNames[permutation[i]]), products,
+                                                                 utils::Random::nextDouble(minMoney, maxMoney)));
+        }
         return companies;
     }
 
     std::vector<std::unique_ptr<Customer>>
     Simulation::generateCustomers(uint32_t amount, std::vector<std::shared_ptr<Product>> products) {
-        std::vector<std::unique_ptr<Customer>> customers(amount);
-        customers[0] = std::make_unique<Customer>("John", 1000, market_, products);
+        std::vector<std::unique_ptr<Customer>> customers;
+        customers.reserve(amount);
+
+        const auto permutation = utils::Random::generatePermutation(0, customerNames.size() - 1);
+
+        double minMoney = MarketConfig::customerAvgIncome - MarketConfig::customerIncomeRandomFactor;
+        double maxMoney = MarketConfig::customerAvgIncome + MarketConfig::customerIncomeRandomFactor;
+
+        for (size_t i = 0; i < amount; i++) {
+            customers.emplace_back(std::make_unique<Customer>(std::string(), utils::Random::nextDouble(minMoney, maxMoney),
+                                                      market_, products));
+        }
         return customers;
     }
 }

@@ -18,7 +18,7 @@ namespace poler::market {
         std::shared_ptr<Market> market_;
 
         static std::vector<std::shared_ptr<Product>> generateProducts(uint32_t amount);
-        static std::vector<std::shared_ptr<Company>> generateCompanies(uint32_t amount, std::vector<std::shared_ptr<Product>> products);
+        static std::vector<std::shared_ptr<Company>> generateCompanies(uint32_t amount, const std::vector<std::shared_ptr<Product>>& products);
         std::vector<std::unique_ptr<Customer>> generateCustomers(uint32_t amount, std::vector<std::shared_ptr<Product>> products);
     };
 }

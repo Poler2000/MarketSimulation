@@ -1,13 +1,14 @@
 #include <thread>
+#include <utility>
 
 #include "Market.h"
 #include "Configuration.h"
 #include "Random.h"
 
 namespace poler::market {
-    Market::Market(std::vector<std::shared_ptr<Product>> &products,
-                   std::vector<std::shared_ptr<Company>> &companies)
-                   : products_(products), companies_(companies) {}
+    Market::Market(std::vector<std::shared_ptr<Product>> products,
+                   std::vector<std::shared_ptr<Company>> companies)
+                   : products_(std::move(products)), companies_(std::move(companies)) {}
 
     void Market::run() {
         isRunning_ = true;

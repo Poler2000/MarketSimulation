@@ -11,8 +11,8 @@ namespace poler::market {
 
     class Market {
     public:
-        Market(std::vector<std::shared_ptr<Product>>& products,
-               std::vector<std::shared_ptr<Company>>& companies);
+        Market(std::vector<std::shared_ptr<Product>>  products,
+               std::vector<std::shared_ptr<Company>>  companies);
         void run();
         void exit();
         bool buy(const std::shared_ptr<Product>& product, double& money);
