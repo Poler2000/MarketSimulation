@@ -3,6 +3,7 @@
 
 #include "Customer.h"
 #include "Configuration.h"
+#include "Random.h"
 
 using namespace std::chrono_literals;
 
@@ -11,7 +12,7 @@ namespace poler::market {
                        std::shared_ptr<Market> market, std::vector<std::shared_ptr<Product>>& products)
         : id_(getId()), name_(std::move(name)), income_(income), isRunning_(true), market_(std::move(market)) {
             for (auto& p : products) {
-                needs_[p] = 10;
+                needs_[p] = utils::Random::nextInt(10);
             }
     }
 
@@ -47,6 +48,7 @@ namespace poler::market {
             if (market_->buy(p, money)) {
                 needs_[p] = needs_[p] < CustomerConfig::defaultNeedDecrease ? 0 :
                         needs_[p] - CustomerConfig::defaultNeedDecrease;
+                p->demand--;
             }
             if (money <= 0) {
                 return;
@@ -66,6 +68,7 @@ namespace poler::market {
     void Customer::updateNeeds() {
         for (auto& p: needs_) {
             p.second += CustomerConfig::defaultNeedIncrease;
+            p.first->demand++;
         }
     }
 

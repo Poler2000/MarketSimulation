@@ -14,13 +14,29 @@ namespace poler::market {
         isRunning_ = true;
         while (isRunning_) {
             sleep();
-            for (auto& p : products_) {
-                auto newSurplus = p->supply - p->demand;
-                p->trend = p->surplus - newSurplus;
-                p->surplus = newSurplus;
+            for (const auto& p : products_) {
+                calculateSurplus(p);
+                adjustPrice(p);
+
                 p->displayInfo();
             }
         }
+    }
+
+    void Market::adjustPrice(const std::shared_ptr<Product> &p) {
+        if (p->surplus >= 0) {
+            p->price = std::max(MarketConfig::productMinPrice,
+                                p->price - utils::Random::nextDouble(MarketConfig::productPriceChange));
+        }
+        else {
+            p->price = p->price + utils::Random::nextDouble(MarketConfig::productPriceChange);
+        }
+    }
+
+    void Market::calculateSurplus(const std::shared_ptr<Product> &p) {
+        auto newSurplus = p->supply - p->demand;
+        p->trend = p->surplus - newSurplus;
+        p->surplus = newSurplus;
     }
 
     bool Market::buy(const std::shared_ptr<Product>& product, double &money) {

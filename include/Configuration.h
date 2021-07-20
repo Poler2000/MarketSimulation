@@ -22,12 +22,15 @@ namespace poler::market {
         static constexpr double customerIncomeRandomFactor = 200;
         static constexpr double productAvgPrice = 50;
         static constexpr double productPriceRandomFactor = 30;
+        static constexpr double productPriceChange = 5;
+        static constexpr double productMinPrice = 0.1;
     } marketConfig;
 
     static constexpr struct CompanyConfig {
         static constexpr auto interval = 1000ms;
         static constexpr double basicDailyCosts = 50;
         static constexpr double newFactoryCosts = 100;
+        static constexpr uint32_t maxStock = 100;
     } companyConfig;
 
     static constexpr std::array<std::string_view , 30> customerNames = {

@@ -19,8 +19,8 @@ namespace poler::market {
     private:
         const uint32_t id_;
         const std::string name_;
-        bool isRunning_{};
         double income_;
+        bool isRunning_;
         std::shared_ptr<Market> market_;
 
         std::map<std::shared_ptr<Product>, int> needs_;

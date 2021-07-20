@@ -21,12 +21,15 @@ namespace poler::market {
         const uint32_t id_;
         const std::string name_;
         std::atomic_bool isRunning_;
-        double account_;
+        std::atomic<double> account_;
+
         double balance_ = 0;
+        double prevAccount_ = 0;
 
         std::vector<std::shared_ptr<Product>> products_;
         std::vector<std::shared_ptr<Factory>> factories_;
         std::unordered_map<std::shared_ptr<Product>, uint32_t> stock_;
+
         std::mutex stockMtx_;
 
         static std::uint32_t getId();

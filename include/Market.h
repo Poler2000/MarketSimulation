@@ -21,6 +21,10 @@ namespace poler::market {
         std::vector<std::shared_ptr<Product>> products_;
         std::vector<std::shared_ptr<Company>> companies_;
         std::atomic_bool isRunning_ = false;
+
+        static void calculateSurplus(const std::shared_ptr<Product> &p) ;
+
+        static void adjustPrice(const std::shared_ptr<Product> &p) ;
     };
 }
 

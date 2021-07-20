@@ -45,7 +45,7 @@ namespace poler::market {
         market_->exit();
 
         for (auto& t : threads) {
-                t.join();
+            t.join();
         }
     }
 
