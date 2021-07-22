@@ -14,8 +14,8 @@ namespace poler::market {
         const std::string name;
         std::atomic<double> price;
 
-        std::atomic_int32_t demand = 0;
-        std::atomic_int32_t supply = 0;
+        std::atomic_uint32_t demand = 0;
+        std::atomic_uint32_t supply = 0;
         std::atomic_int32_t trend = 0;
         std::atomic_int32_t surplus = 0;
 

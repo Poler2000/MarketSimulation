@@ -10,6 +10,14 @@
 
 
 namespace poler::market {
+    enum class Strategies {
+        InvestInHighDemand,
+        InvestInHighPrice,
+        InvestRandomly,
+        MakeNoChanges,
+        RegainProfitability,
+    };
+
     class Company {
     public:
         Company(std::string name, std::vector<std::shared_ptr<Product>> products, double startingFunds);
@@ -22,12 +30,13 @@ namespace poler::market {
         const std::string name_;
         std::atomic_bool isRunning_;
         std::atomic<double> account_;
+        Strategies currentStrategy_;
 
         double balance_ = 0;
         double prevAccount_ = 0;
 
         std::vector<std::shared_ptr<Product>> products_;
-        std::vector<std::shared_ptr<Factory>> factories_;
+        std::vector<std::unique_ptr<Factory>> factories_;
         std::unordered_map<std::shared_ptr<Product>, uint32_t> stock_;
 
         std::mutex stockMtx_;
@@ -47,6 +56,14 @@ namespace poler::market {
         void makeChanges();
 
         void displayInfo();
+
+        void checkForHighDemand();
+
+        void checkForHighPrice();
+
+        void makeRandomInvestment();
+
+        void regainProfitability();
     };
 }
 

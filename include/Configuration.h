@@ -8,10 +8,14 @@
 namespace poler::market {
     using namespace std::chrono_literals;
 
+    static constexpr std::string_view mainDir = "sim1/";
+    static constexpr std::string_view mainDir2 = "sim1/";
+
     static constexpr struct CustomerConfig {
         static constexpr int defaultNeedIncrease = 1;
         static constexpr int defaultNeedDecrease = 3;
         static constexpr auto interval = 1000ms;
+        static constexpr std::string_view dir = "sim1/customer";
     } customerConfig;
 
     static constexpr struct MarketConfig {
@@ -24,6 +28,7 @@ namespace poler::market {
         static constexpr double productPriceRandomFactor = 30;
         static constexpr double productPriceChange = 5;
         static constexpr double productMinPrice = 0.1;
+        static constexpr std::string_view dir = "sim1/product";
     } marketConfig;
 
     static constexpr struct CompanyConfig {
@@ -31,6 +36,8 @@ namespace poler::market {
         static constexpr double basicDailyCosts = 50;
         static constexpr double newFactoryCosts = 100;
         static constexpr uint32_t maxStock = 100;
+        static constexpr double probabilityOfStrategyChange = 0.3;
+        static constexpr std::string_view dir = "sim1/company";
     } companyConfig;
 
     static constexpr std::array<std::string_view , 30> customerNames = {

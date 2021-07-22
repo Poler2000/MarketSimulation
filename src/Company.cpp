@@ -1,12 +1,15 @@
 #include <thread>
 #include <utility>
+#include <algorithm>
 
 #include "Company.h"
 #include "Configuration.h"
+#include "Random.h"
 
 namespace poler::market {
     Company::Company(std::string name, std::vector<std::shared_ptr<Product>>  products, const double startingFunds)
-     : id_(getId()), name_(std::move(name)), isRunning_(true), account_(startingFunds), prevAccount_(account_), products_(std::move(products)) {}
+     : id_(getId()), name_(std::move(name)), isRunning_(true), account_(startingFunds),
+     currentStrategy_(Strategies::InvestRandomly), prevAccount_(account_), products_(std::move(products)) {}
 
     bool Company::requestItem(const std::shared_ptr<Product>& product, double price) {
         std::scoped_lock lock(stockMtx_);
@@ -30,6 +33,7 @@ namespace poler::market {
             displayInfo();
             sleep();
         }
+        utils::Logger::error("company ends it's journey!");
     }
 
     uint32_t Company::getId() {
@@ -50,6 +54,7 @@ namespace poler::market {
         for (const auto& f: factories_) {
             stock_[f->product] = std::min(CompanyConfig::maxStock,
                                           stock_[f->product] + f->production);
+            f->product->supply += f->production;
         }
         stockMtx_.unlock();
     }
@@ -67,11 +72,35 @@ namespace poler::market {
     }
 
     void Company::checkStrategy() {
+        if (account_ + balance_ < 0) {
+            currentStrategy_ = Strategies::RegainProfitability;
+            utils::Logger::log(std::string(CompanyConfig::dir) + std::to_string(id_), true, "strategy changed to: {}", (int)currentStrategy_);
+            return;
+        }
 
+        if (utils::Random::nextDouble() < CompanyConfig::probabilityOfStrategyChange) {
+            currentStrategy_ = static_cast<Strategies>(utils::Random::nextInt(4));
+            utils::Logger::log(std::string(CompanyConfig::dir) + std::to_string(id_), true, "strategy changed to: {}", (int)currentStrategy_);
+        }
     }
 
     void Company::makeChanges() {
-
+        switch (currentStrategy_) {
+            case Strategies::InvestInHighDemand:
+                checkForHighDemand();
+                break;
+            case Strategies::InvestInHighPrice:
+                checkForHighPrice();
+                break;
+            case Strategies::InvestRandomly:
+                makeRandomInvestment();
+                break;
+            case Strategies::MakeNoChanges:
+                break;
+            case Strategies::RegainProfitability:
+                regainProfitability();
+                break;
+        }
     }
 
     void Company::displayInfo() {
@@ -79,5 +108,37 @@ namespace poler::market {
                             "in account: {2}, balance: {3}\n"
                             "number of factories: {4}, strategy: {5}\n" ,
                             name_, (int)id_, (double)account_, balance_, (int)factories_.size(), 0);
+    }
+
+    void Company::checkForHighDemand() {
+        if (account_ + balance_ - CompanyConfig::newFactoryCosts > 0) {
+            auto itMax = std::max_element(products_.begin(), products_.end(), [](const auto& p, const auto& q) {
+                return p->demand < q->demand;
+            });
+            utils::Logger::log(std::string(CompanyConfig::dir) + std::to_string(id_), true, "new factory: {}", itMax->get()->name);
+            factories_.emplace_back(std::make_unique<Factory>(*itMax));
+        }
+    }
+
+    void Company::checkForHighPrice() {
+        if (account_ + balance_ - CompanyConfig::newFactoryCosts > 0) {
+            auto itMax = std::max_element(products_.begin(), products_.end(), [](const auto& p, const auto& q) {
+                return p->price < q->price;
+            });
+            utils::Logger::log(std::string(CompanyConfig::dir) + std::to_string(id_), true, "new factory: {}", itMax->get()->name);
+            factories_.emplace_back(std::make_unique<Factory>(*itMax));
+        }
+    }
+
+    void Company::makeRandomInvestment() {
+        if (account_ + balance_ - CompanyConfig::newFactoryCosts > 0) {
+            auto& p = products_[utils::Random::nextInt((int)products_.size())];
+            utils::Logger::log(std::string(CompanyConfig::dir) + std::to_string(id_), true, "new factory: {}", p->name);
+            factories_.emplace_back(std::make_unique<Factory>(p));
+        }
+    }
+
+    void Company::regainProfitability() {
+
     }
 }

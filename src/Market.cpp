@@ -21,6 +21,7 @@ namespace poler::market {
                 p->displayInfo();
             }
         }
+        utils::Logger::error("market ends it's journey!");
     }
 
     void Market::adjustPrice(const std::shared_ptr<Product> &p) {
@@ -41,16 +42,22 @@ namespace poler::market {
 
     bool Market::buy(const std::shared_ptr<Product>& product, double &money) {
         bool result = false;
-        do {
-            int i = utils::Random::nextInt(companies_.size() - 1);
-            double price = product->price;
-            if (money < price) {
-                return false;
-            }
 
-            result = companies_[i]->requestItem(product, price);
-        } while (!result);
-        return true;
+        const auto permutation = utils::Random::generatePermutation(0, companies_.size() - 1);
+
+        double price = product->price;
+        if (money < price) {
+            return false;
+        }
+
+        for (size_t i = 0; i < companies_.size(); i++) {
+            result = companies_[permutation[i]]->requestItem(product, price);
+            if (result) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     void Market::sleep() {

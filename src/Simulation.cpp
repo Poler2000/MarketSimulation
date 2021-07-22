@@ -93,8 +93,8 @@ namespace poler::market {
         double maxMoney = MarketConfig::customerAvgIncome + MarketConfig::customerIncomeRandomFactor;
 
         for (size_t i = 0; i < amount; i++) {
-            customers.emplace_back(std::make_unique<Customer>(std::string(), utils::Random::nextDouble(minMoney, maxMoney),
-                                                      market_, products));
+            customers.emplace_back(std::make_unique<Customer>(std::string(customerNames[permutation[i]]),
+                                                              utils::Random::nextDouble(minMoney, maxMoney), market_, products));
         }
         return customers;
     }

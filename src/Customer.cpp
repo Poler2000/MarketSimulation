@@ -23,6 +23,7 @@ namespace poler::market {
             goShopping(wishlist);
             goToSleep();
         }
+        utils::Logger::error("customer ends it's journey!");
     }
 
     std::vector<std::shared_ptr<Product>> Customer::createWishlist() {
