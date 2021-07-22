@@ -25,6 +25,7 @@ namespace poler::market {
     }
 
     void Market::adjustPrice(const std::shared_ptr<Product> &p) {
+        auto prev = (double)p->price;
         if (p->surplus >= 0) {
             p->price = std::max(MarketConfig::productMinPrice,
                                 p->price - utils::Random::nextDouble(MarketConfig::productPriceChange));
@@ -32,6 +33,9 @@ namespace poler::market {
         else {
             p->price = p->price + utils::Random::nextDouble(MarketConfig::productPriceChange);
         }
+
+        utils::Logger::log(std::string(MarketConfig::dir) + std::to_string(p->id), true,
+                           "price from {0} to {1}, demand: {2}, supply {3}", prev, (double)p->price, (int)p->demand, (int)p->surplus);
     }
 
     void Market::calculateSurplus(const std::shared_ptr<Product> &p) {
@@ -53,6 +57,7 @@ namespace poler::market {
         for (size_t i = 0; i < companies_.size(); i++) {
             result = companies_[permutation[i]]->requestItem(product, price);
             if (result) {
+                money -= price;
                 return true;
             }
         }

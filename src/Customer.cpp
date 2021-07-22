@@ -44,17 +44,27 @@ namespace poler::market {
 
     void Customer::goShopping(std::vector<std::shared_ptr<Product>>& wishlist) {
         double money = income_;
+        bool shouldContinueShopping = true;
+        utils::Logger::log(std::string(CustomerConfig::dir) + std::to_string(id_), true,
+                           "customer goes shopping");
 
-        for (const auto& p : wishlist) {
-            if (market_->buy(p, money)) {
-                needs_[p] = needs_[p] < CustomerConfig::defaultNeedDecrease ? 0 :
-                        needs_[p] - CustomerConfig::defaultNeedDecrease;
-                p->demand--;
-            }
-            if (money <= 0) {
-                return;
+        while (shouldContinueShopping) {
+            shouldContinueShopping = false;
+            for (const auto& p : wishlist) {
+                if (needs_[p] > 0 && market_->buy(p, money)) {
+                    needs_[p] = needs_[p] < CustomerConfig::defaultNeedDecrease ? 0 :
+                                needs_[p] - CustomerConfig::defaultNeedDecrease;
+                    p->demand--;
+                    utils::Logger::log(std::string(CustomerConfig::dir) + std::to_string(id_), true,
+                                       "customer bought {0} money left: {1}", p->name, money);
+                    shouldContinueShopping = true;
+                }
+                if (money <= 0) {
+                    return;
+                }
             }
         }
+
     }
 
     std::uint32_t Customer::getId() {

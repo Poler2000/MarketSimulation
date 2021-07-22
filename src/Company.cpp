@@ -28,6 +28,9 @@ namespace poler::market {
             getProducedItems();
             payTheBills();
             recalculateState();
+            if (!isRunning_) {
+                return;
+            }
             checkStrategy();
             makeChanges();
             displayInfo();
@@ -69,18 +72,21 @@ namespace poler::market {
     void Company::recalculateState() {
         balance_ = account_ - prevAccount_;
         prevAccount_ = account_;
+        if (account_ < 0 && balance_ < 0) {
+            utils::Logger::log(std::string(CompanyConfig::dir) + std::to_string(id_),
+                               true, "bankrupt!");
+            exit();
+        }
     }
 
     void Company::checkStrategy() {
         if (account_ + balance_ < 0) {
             currentStrategy_ = Strategies::RegainProfitability;
-            utils::Logger::log(std::string(CompanyConfig::dir) + std::to_string(id_), true, "strategy changed to: {}", (int)currentStrategy_);
             return;
         }
 
         if (utils::Random::nextDouble() < CompanyConfig::probabilityOfStrategyChange) {
             currentStrategy_ = static_cast<Strategies>(utils::Random::nextInt(4));
-            utils::Logger::log(std::string(CompanyConfig::dir) + std::to_string(id_), true, "strategy changed to: {}", (int)currentStrategy_);
         }
     }
 
@@ -108,6 +114,9 @@ namespace poler::market {
                             "in account: {2}, balance: {3}\n"
                             "number of factories: {4}, strategy: {5}\n" ,
                             name_, (int)id_, (double)account_, balance_, (int)factories_.size(), 0);
+        utils::Logger::log(std::string(CompanyConfig::dir) + std::to_string(id_),
+                           true, "in account: {0}, balance: {1}\n number of factories: {2}, strategy: {3}",
+                           (double)account_, balance_, (int)factories_.size(), (int)currentStrategy_);
     }
 
     void Company::checkForHighDemand() {
