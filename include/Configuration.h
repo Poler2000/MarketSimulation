@@ -9,8 +9,8 @@ namespace poler::market {
     using namespace std::chrono_literals;
 
     static constexpr struct CustomerConfig {
-        static constexpr int defaultNeedIncrease = 1;
-        static constexpr int defaultNeedDecrease = 3;
+        static constexpr int defaultNeedIncrease = 8;
+        static constexpr int defaultNeedDecrease = 1;
         static constexpr auto interval = 100ms;
         static constexpr std::string_view dir = "sim1/customer/";
     } customerConfig;
@@ -32,6 +32,8 @@ namespace poler::market {
         static constexpr auto interval = 100ms;
         static constexpr double basicDailyCosts = 50;
         static constexpr double newFactoryCosts = 100;
+        static constexpr double factorySellPrice = 60;
+        static constexpr double dangerousSDRatio = 2.0;
         static constexpr uint32_t maxStock = 100;
         static constexpr double probabilityOfStrategyChange = 0.3;
         static constexpr std::string_view dir = "sim1/company/";

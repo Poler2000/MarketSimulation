@@ -78,8 +78,9 @@ namespace poler::market {
 
     void Customer::updateNeeds() {
         for (auto& p: needs_) {
-            p.second += CustomerConfig::defaultNeedIncrease;
-            p.first->demand++;
+            auto increase = utils::Random::nextInt(CustomerConfig::defaultNeedIncrease);
+            p.second += increase;
+            p.first->demand += increase;
         }
     }
 

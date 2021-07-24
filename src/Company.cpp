@@ -148,6 +148,20 @@ namespace poler::market {
     }
 
     void Company::regainProfitability() {
+        for (auto& f : factories_) {
+            if (f->basicCosts + f->costsPerItem * f->production >
+                f->product->price * f->production) {
+                f.reset();
+                account_ = account_ + CompanyConfig::factorySellPrice;
+                continue;
+            }
+            if ((double)f->product->supply / f->product->demand > CompanyConfig::dangerousSDRatio) {
+                f.reset();
+                account_ = account_ + CompanyConfig::factorySellPrice;
+            }
+        }
 
+        factories_.erase(
+                std::remove(factories_.begin(), factories_.end(), nullptr), factories_.end());
     }
 }
